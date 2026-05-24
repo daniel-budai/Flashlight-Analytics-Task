@@ -1,0 +1,27 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    environment:
+      FLASK_ENV: development
+      PYTHONUNBUFFERED: "1"
+      UPLOAD_FOLDER: /tmp/uploads
+    volumes:
+      - ./backend:/app
+      - uploads:/tmp/uploads
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_PROXY: http://backend:5000
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+volumes:
+  uploads:

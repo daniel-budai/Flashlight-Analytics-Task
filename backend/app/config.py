@@ -7,7 +7,10 @@ class DevConfig:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB upload limit
     SYNC_IMPORTS = False
-    UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.dirname(__file__)), "uploads")
+    UPLOAD_FOLDER = os.getenv(
+        "UPLOAD_FOLDER",
+        os.path.join(os.path.dirname(os.path.dirname(__file__)), "uploads"),
+    )
     CACHE_TYPE = "SimpleCache"
     CACHE_DEFAULT_TIMEOUT = 300
 
