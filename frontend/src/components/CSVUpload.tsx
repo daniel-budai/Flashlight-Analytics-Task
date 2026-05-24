@@ -28,7 +28,9 @@ export function CSVUpload() {
     mutation.error != null
       ? isAxiosError(mutation.error)
         ? `Import failed (${mutation.error.response?.status ?? 'unknown'})`
-        : 'Could not reach the backend. Is it running on port 5000?'
+        : mutation.error instanceof Error
+          ? mutation.error.message
+          : 'Could not reach the backend. Is it running on port 5000?'
       : null
 
   return (
@@ -57,7 +59,7 @@ export function CSVUpload() {
           disabled={!file || mutation.isPending}
           className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {mutation.isPending ? 'Importing…' : 'Import'}
+          {mutation.isPending ? 'Processing…' : 'Import'}
         </button>
       </form>
 

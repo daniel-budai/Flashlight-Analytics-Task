@@ -12,6 +12,19 @@ def parse_dataframe(file) -> tuple[pd.DataFrame | None, str | None]:
     except Exception as e:
         return None, f"Could not parse CSV: {e}"
 
+    return _normalize_dataframe(df)
+
+
+def parse_dataframe_from_path(path: str) -> tuple[pd.DataFrame | None, str | None]:
+    try:
+        df = pd.read_csv(path)
+    except Exception as e:
+        return None, f"Could not parse CSV: {e}"
+
+    return _normalize_dataframe(df)
+
+
+def _normalize_dataframe(df: pd.DataFrame) -> tuple[pd.DataFrame, None]:
     df.columns = [c.strip().lower().replace(" ", "_") for c in df.columns]
     df = _apply_aliases(df)
     return df, None

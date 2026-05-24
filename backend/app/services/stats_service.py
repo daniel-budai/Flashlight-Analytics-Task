@@ -1,11 +1,35 @@
+import hashlib
+import json
+
+from flask import current_app
 from sqlalchemy import func
 
+from app.extensions import cache
 from app.models import Car, PriceHistory
 from app.services.query_builder import build_query
 
 
+def _stats_cache_key(filters: dict) -> str:
+    raw = json.dumps(sorted(filters.items()), sort_keys=True)
+    digest = hashlib.md5(raw.encode()).hexdigest()
+    return f"stats:{digest}"
+
+
 def get_stats(filters: dict | None = None) -> dict:
-    query = build_query(filters or {})
+    filters = filters or {}
+    key = _stats_cache_key(filters)
+    cached = cache.get(key)
+    if cached is not None:
+        return cached
+
+    result = _compute_stats(filters)
+    timeout = current_app.config.get("CACHE_DEFAULT_TIMEOUT", 300)
+    cache.set(key, result, timeout=timeout)
+    return result
+
+
+def _compute_stats(filters: dict) -> dict:
+    query = build_query(filters)
 
     total_cars = query.with_entities(func.count(func.distinct(Car.id))).scalar() or 0
     total_prices = query.count()

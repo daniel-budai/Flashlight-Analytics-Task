@@ -1,3 +1,20 @@
+export type ImportJobStatus = 'pending' | 'processing' | 'completed' | 'failed'
+
+export interface ImportJobAccepted {
+  job_id: number
+  status: ImportJobStatus
+}
+
+export interface ImportJobResponse {
+  id: number
+  filename: string
+  status: ImportJobStatus
+  created_at: string
+  completed_at: string | null
+  result?: Omit<ImportSuccess, 'ok'>
+  error?: string
+}
+
 export interface Car {
   id: number
   brand: string

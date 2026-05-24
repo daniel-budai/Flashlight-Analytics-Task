@@ -5,7 +5,7 @@ from flask import Flask
 from flask_cors import CORS
 
 from app.config import config
-from app.extensions import db, migrate
+from app.extensions import cache, db, migrate
 
 
 def create_app(env: str | None = None) -> Flask:
@@ -16,7 +16,10 @@ def create_app(env: str | None = None) -> Flask:
     env = env or os.getenv("FLASK_ENV", "development")
     app.config.from_object(config.get(env, config["development"]))
 
+    os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
+
     db.init_app(app)
+    cache.init_app(app)
     if migrate is not None:
         migrate.init_app(app, db)
     CORS(app)

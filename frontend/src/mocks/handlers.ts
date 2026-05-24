@@ -15,15 +15,23 @@ export const handlers = [
   }),
 
   http.post('/api/import', () => {
-    return HttpResponse.json(
-      {
+    return HttpResponse.json({ job_id: 1, status: 'pending' }, { status: 202 })
+  }),
+
+  http.get('/api/imports/jobs/:id', () => {
+    return HttpResponse.json({
+      id: 1,
+      filename: 'test.csv',
+      status: 'completed',
+      created_at: new Date().toISOString(),
+      completed_at: new Date().toISOString(),
+      result: {
         imported: 3,
         skipped: 0,
         duplicates: 0,
         invalid_rows: [],
         duplicate_rows: [],
       },
-      { status: 201 },
-    )
+    })
   }),
 ]
